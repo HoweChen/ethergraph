@@ -1,4 +1,4 @@
-pragma solidity ^0.4.0;
+pragma solidity ^0.4.22;
 //pragma experimental ABIEncoderV2;
 
 contract Message {
@@ -18,13 +18,13 @@ contract Message {
         if (msg.sender == owner) _;
     }
 
-    constructor(){
+    constructor() public{
         owner = msg.sender;
     }
 
     function publish(string authorNickName, string title, string body) public returns (bytes32){
         Article memory temp = Article(msg.sender, authorNickName, title, body);
-        bytes32 memory tmpID = sha256(abi.encodePacked(msg.sender, authorNickName, title, body));
+        bytes32 tmpID = sha256(abi.encodePacked(msg.sender, authorNickName, title, body));
         ID2Article[tmpID] = temp;
         return (tmpID);
     }
