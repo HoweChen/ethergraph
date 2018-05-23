@@ -1,0 +1,3 @@
+Fibonacci.deployed().then(function(instance){return instance.generateFib(10);});
+
+Message.deployed().then(function(instance){return instance.publish.call('SkyFather','title','body')});
