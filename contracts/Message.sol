@@ -27,12 +27,8 @@ contract Message {
     }
 
     function publish(string authorNickName, string title, string body) public returns (bytes32){
-        // setup an anonymous article without the authorNickNam
-        if (authorNickName != "anonymous") {
-            Article memory temp = Article(msg.sender, authorNickName, title, body, 1);
-        } else {
-            Article memory temp = Article(msg.sender, "anonymous", title, body, 1);
-        }
+
+        Article memory temp = Article(msg.sender, authorNickName, title, body, 1);
         //bytes32 tmpID = sha256(abi.encodePacked(msg.sender, authorNickName, title, body));
         // only encode two argument, the nick name and the title for better usage of searching through the web url
         bytes32 tmpID = sha256(abi.encodePacked(authorNickName, title));
