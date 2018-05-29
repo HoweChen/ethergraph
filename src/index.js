@@ -31,7 +31,7 @@ ReactDOM.render(
     </BrowserRouter>
     <BrowserRouter>
       <div>
-        <Route path='/article' component={Article}></Route>
+        <Route path='/article/@:nickName/:title' component={Article}></Route>
       </div>
     </BrowserRouter>
   </div>),

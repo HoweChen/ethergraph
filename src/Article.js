@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "../build/contracts/SimpleStorage.json";
+import MessageContract from "../build/contracts/Message.json";
 import getWeb3 from "./utils/getWeb3";
 import "./css/oswald.css";
 import "./css/open-sans.css";
@@ -11,9 +11,16 @@ class Article extends Component {
     super(props);
 
     this.state = {
-      storageValue: 0,
       web3: null,
+      authorAddress: null,
+      authorNickName: props.match.params.nickName,
+      title: props.match.params.title,
+      body: null,
+      viewCount: null,
     };
+
+    // console.log(this.state.authorNickName);
+    // console.log(this.state.title);
   }
 
   componentWillMount () {
@@ -41,25 +48,27 @@ class Article extends Component {
      */
 
     const contract = require("truffle-contract");
-    const simpleStorage = contract(SimpleStorageContract);
-    simpleStorage.setProvider(this.state.web3.currentProvider);
-
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance;
+    const message = contract(MessageContract);
+    message.setProvider(this.state.web3.currentProvider);
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      simpleStorage.deployed().then((instance) => {
-        simpleStorageInstance = instance;
-
-        // Stores a given value, 5 by default.
-        return simpleStorageInstance.set(5, {from: accounts[0]});
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0]);
+      message.deployed().then((instance) => {
+        return instance.getArticleByURL.call("SkyFather",
+          "fuck-you", {from: accounts[0]});
       }).then((result) => {
         // Update state with the result.
-        return this.setState({storageValue: result.c[0]});
+        console.log(result);
+        return this.setState({
+          authorAddress: result[0],
+          authorNickName: result[1],
+          title: result[2],
+          body: result[3],
+          viewCount: result[4].c[0],
+        });
+
+      }).catch((error) => {
+        console.log(error);
       });
     });
   }
@@ -76,13 +85,11 @@ class Article extends Component {
           <div className="pure-g">
             <div className="pure-u-1-1">
               <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below
-                will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of
-                Article.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
+              <p>{this.state.authorAddress}</p>
+              <p>{this.state.authorNickName}</p>
+              <p>{this.state.title}</p>
+              <p>{this.state.body}</p>
+              <p>{this.state.viewCount}</p>
             </div>
           </div>
         </main>
